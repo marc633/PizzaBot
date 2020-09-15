@@ -1,7 +1,7 @@
 import discord
-import config
 
 client = discord.Client()
+token = open("token.txt", "r").read()
 
 @client.event # event decorator/wrapper
 async def on_ready():
@@ -18,4 +18,4 @@ async def on_message(message):
         await message.channel.send("https://www.nfl.com/schedules/")
     
 
-client.run(config.token())
+client.run(token)
