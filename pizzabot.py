@@ -47,23 +47,3 @@ async def on_message(message):
     
 
 client.run(token)
-
-
-
-# while True:
-#     msg = input("Message #general: ")
-
-#     if msg == "!firstmale":
-#         print(f"```random_name(male)```")
-
-#     elif msg == "!firstfemale":
-#         print(random_name(female))
-
-#     elif msg == "!fullmale":
-#         print(f"{random_name(male)} {random_name(last)}")
-
-#     elif msg == "!fullfemale":
-#         print(f"{random_name(female)} {random_name(last)}")
-
-#     else:
-#         continue
