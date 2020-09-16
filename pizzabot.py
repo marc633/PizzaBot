@@ -2,10 +2,19 @@
 # https://discord.com/api/oauth2/authorize?client_id=754851728981229649&permissions=67648&scope=bot
 
 import discord
+import random
 
 token = open("token.txt", "r").read() # concealing token
 
 client = discord.Client()
+
+male = 'male.txt'
+female = 'female.txt'
+last = 'last.txt'
+
+def random_name(fname):
+    lines = open(fname).read().splitlines()
+    return random.choice(lines)
 
 @client.event # event decorator/wrapper
 async def on_ready():
@@ -21,8 +30,40 @@ async def on_message(message):
     if "pizza" in message.content.lower(): # adds reaction whenever "pizza" is mentioned
         await message.add_reaction("\U0001F355")
 
+    elif "!firstmale" in message.content.lower():
+        await message.channel.send(f"```{random_name(male)}```")
+
+    elif "!firstfemale" in message.content.lower():
+        await message.channel.send(f"```{random_name(female)}```")
+
+    elif "!fullmale" in message.content.lower():
+        await message.channel.send(f"```{random_name(male)} {random_name(last)}```")
+
+    elif "!fullfemale" in message.content.lower():
+        await message.channel.send(f"```{random_name(female)} {random_name(last)}```")
+
     elif "!football" in message.content.lower(): # returns link for scores (web scrape eventually)
         await message.channel.send("https://sportsdata.usatoday.com/football/nfl/scores")
     
 
 client.run(token)
+
+
+
+# while True:
+#     msg = input("Message #general: ")
+
+#     if msg == "!firstmale":
+#         print(f"```random_name(male)```")
+
+#     elif msg == "!firstfemale":
+#         print(random_name(female))
+
+#     elif msg == "!fullmale":
+#         print(f"{random_name(male)} {random_name(last)}")
+
+#     elif msg == "!fullfemale":
+#         print(f"{random_name(female)} {random_name(last)}")
+
+#     else:
+#         continue
