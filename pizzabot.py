@@ -8,9 +8,9 @@ token = open("token.txt", "r").read() # concealing token
 
 client = discord.Client()
 
-male = 'male.txt' # male name file
-female = 'female.txt' # female name file
-last = 'last.txt' # last name name file
+male = 'first_name_male.txt' # male name file
+female = 'first_name_female.txt' # female name file
+last = 'last_name.txt' # last name name file
 pizzatoppings = 'pizzatoppings.txt' # pizza toppings file
 
 def random_name(fname):
@@ -27,10 +27,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}")
-
-    # if "!pizza" in message.content.lower() and message.author.name != "PizzaBot":
-    #     await message.channel.send("PIZZA! P-P-P-Pizza")
+    print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}") # chat log for testing
 
     if "pizza" in message.content.lower(): # adds reaction whenever "pizza" is mentioned
         await message.add_reaction("\U0001F355")
@@ -59,16 +56,20 @@ async def on_message(message):
         else:
             ingredients = 1
 
-        topping_list = [random_topping(pizzatoppings) for i in range(ingredients)] # list for random ingredients
+        if ingredients > 0 and ingredients <= 7:
+            topping_list = [random_topping(pizzatoppings) for i in range(ingredients)] # list for random ingredients
 
-        your_pizza = "" # string to populate for output
-        your_pizza = ", ".join(topping_list[0:-1:]) # add all but last item to string
+            your_pizza = "" # string to populate for output
+            your_pizza = ", ".join(topping_list[0:-1:]) # add all but last item to string
 
         if ingredients > 7:
             await message.channel.send("Never thought I'd say this... go eat a salad.")
 
         elif ingredients < 0:
             await message.channel.send("You should order a basket of breadsticks... with marinara dipping sauce, of course.")
+
+        elif ingredients == 0:
+            await message.channel.send("You should order ramen.")    
         
         elif ingredients == 1:
             await message.channel.send(f"You should order a pizza with {topping_list[0]}.")
