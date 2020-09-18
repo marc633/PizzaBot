@@ -3,6 +3,7 @@
 
 import discord
 import random
+import re
 
 token = open("token.txt", "r").read() # concealing token
 
@@ -17,9 +18,9 @@ def random_name(fname):
     lines = open(fname).read().splitlines()
     return random.choice(lines)
 
-def random_topping(fname):
-        toppings = open(fname).read().splitlines()
-        return random.choice(toppings)
+def random_topping(fname, ingredients):
+    toppings = open(fname).read().splitlines()
+    return random.sample(toppings, ingredients)
 
 @client.event # event decorator/wrapper
 async def on_ready():
@@ -29,7 +30,7 @@ async def on_ready():
 async def on_message(message):
     print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}") # chat log for testing
 
-    if "pizza" in message.content.lower(): # adds reaction whenever "pizza" is mentioned
+    if re.findall(r"(?i)\bpizza\b", message.content.lower()):  # adds reaction whenever "pizza" is mentioned
         await message.add_reaction("\U0001F355")
 
     elif "!firstmale" in message.content.lower():
@@ -47,39 +48,31 @@ async def on_message(message):
     elif "!football" in message.content.lower(): # returns link for scores (web scrape eventually)
         await message.channel.send("https://sportsdata.usatoday.com/football/nfl/scores")
     
-    elif "!toppings" in message.content.lower():
+    elif re.match(r"(?i)^[!]?toppings\s?[1-7]?$", message.content.lower()):
 
-        if len(message.content.lower()) > 9: # check for modifier
-            command = message.content.lower().split()
-            ingredients = int(command[1])
+        if re.fullmatch(r"(?i)^[!]?toppings$", message.content.lower()):
+            ingredients = random.randint(1, 3) # if no modifier is given, a random number between 1 and 3 is chosen for ingredients
 
         else:
-            ingredients = 1
+            ingredients = int(re.findall(r"\b[1-7]\b", message.content.lower())[0]) # converting !toppings # into just a #
+    
+        topping_list = random_topping(pizzatoppings, ingredients) # creating list for toppings
 
-        if ingredients > 0 and ingredients <= 7:
-            topping_list = [random_topping(pizzatoppings) for i in range(ingredients)] # list for random ingredients
-
-            your_pizza = "" # string to populate for output
-            your_pizza = ", ".join(topping_list[0:-1:]) # add all but last item to string
-
-        if ingredients > 7:
-            await message.channel.send("Never thought I'd say this... go eat a salad.")
-
-        elif ingredients < 0:
-            await message.channel.send("You should order a basket of breadsticks... with marinara dipping sauce, of course.")
-
-        elif ingredients == 0:
-            await message.channel.send("You should order ramen.")    
+        your_pizza = "" # creating string for output
+        your_pizza = ", ".join(topping_list[0:-1:]) # forming a string with everything but last ingredient because grammar
         
-        elif ingredients == 1:
+        if ingredients == 1: # 1 ingredient
             await message.channel.send(f"You should order a pizza with {topping_list[0]}.")
 
-        elif ingredients == 2:
-            your_pizza = your_pizza + " and " + topping_list[-1] # grammarbot
+        elif ingredients == 2: # 2 ingredients
+            your_pizza = your_pizza + " and " + topping_list[-1] # adding back last ingredient
             await message.channel.send(f"You should order a pizza with {your_pizza}.")
 
-        else:  # 3-7 results
-            your_pizza = your_pizza + ", and " + topping_list[-1] # grammarbot
+        else:  # for ingredients between 3 and 7
+            your_pizza = your_pizza + ", and " + topping_list[-1] # adding back last ingredient
             await message.channel.send(f"You should order a pizza with {your_pizza}.")
+
+    elif "!toppings" in message.content.lower(): # catches all user user input for !toppings
+        await message.channel.send("You need to only use a single number between 1 and 7.")
 
 client.run(token)
