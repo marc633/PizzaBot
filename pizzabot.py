@@ -12,6 +12,50 @@ male = 'first_name_male.txt' # male name file
 female = 'first_name_female.txt' # female name file
 last = 'last_name.txt' # last name name file
 
+#VARIABLES
+ytdl_format_options = {
+    'format': 'bestaudio/best',
+    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
+    'restrictfilenames': True,
+    'noplaylist': True,
+    'nocheckcertificate': True,
+    'ignoreerrors': False,
+    'logtostderr': False,
+    'quiet': True,
+    'no_warnings': True,
+    'default_search': 'auto',
+    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
+}
+
+ffmpeg_options = {
+    'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+    'options': '-vn'
+}
+
+ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+
+#CLASSES
+class YTDLSource(discord.PCMVolumeTransformer):
+    def __init__(self, source, *, data, volume=0.33):
+        super().__init__(source, volume)
+
+        self.data = data
+
+        self.title = data.get('title')
+        self.url = data.get('url')
+
+    @classmethod
+    async def from_url(cls, url):
+        data = ytdl.extract_info(url, download=False)
+
+        if 'entries' in data:
+            # take first item from a playlist
+            data = data['entries'][0]
+
+        filename = data['url'] 
+        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
+
+#FUNCTIONS
 def make_pizza(ingredients):
     pizzatoppings = 'pizzatoppings.txt' # pizza toppings file
 
@@ -39,12 +83,14 @@ def random_topping(fname, ingredients):
     toppings = open(fname).read().splitlines()
     return random.sample(toppings, ingredients)
 
+#BOT CONNECTING
 @client.event # event decorator/wrapper
 async def on_ready():
     activity = discord.Game(name="P-P-P-PIZZA!", type=3)
     await client.change_presence(status=discord.Status.online, activity=activity)
     print(f"DING! Your fresh {client.user} is ready.")
 
+#EVENTS
 @client.event
 async def on_message(message):
     # print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}") # chat log for testing
@@ -53,6 +99,7 @@ async def on_message(message):
         await message.add_reaction("\U0001F355")
     await client.process_commands(message)
 
+#COMMANDS
 @client.command()
 async def firstmale(ctx):
     await ctx.send(f"```{random_name(male)}```")
@@ -88,5 +135,32 @@ async def toppings(ctx, ingredients=""):
 
     except Exception:
         await ctx.send("You must only use a single number between 1 and 7.")
+
+@client.command()
+async def play(ctx, url):
+    try:
+        channel = ctx.author.voice.channel
+        await channel.connect()
+
+        player = await YTDLSource.from_url(url)
+        ctx.voice_client.play(player)
+        await ctx.send(f'Now playing on PizzaBot Radio: {player.title}\n```Playback Commands:\n!volume [1-100]\n!stop```')
+    except AttributeError:
+        await ctx.send("You must join a channel before using the !play command.")        
+
+@client.command()
+async def volume(ctx, volume: int):
+    if ctx.voice_client is None:
+        await ctx.send("Not connected to a voice channel.")
+    
+    if volume > 100: volume = 100
+    if volume < 1: volume = 1
+
+    ctx.voice_client.source.volume = volume / 100
+    await ctx.send(f"Changed volume to {volume}%")
+
+@client.command()
+async def stop(ctx):
+    await ctx.voice_client.disconnect()
 
 client.run(token)
