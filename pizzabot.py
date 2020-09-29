@@ -86,9 +86,9 @@ def random_topping(fname, ingredients):
 #BOT CONNECTING
 @client.event # event decorator/wrapper
 async def on_ready():
-    activity = discord.Game(name="P-P-P-PIZZA!", type=3)
+    activity = discord.Activity(name="Pizza Cook", type=discord.ActivityType.watching)
     await client.change_presence(status=discord.Status.online, activity=activity)
-    print(f"DING! Your fresh {client.user} is ready.")
+    print(f"DING! {client.user} has emerged from the oven.")
 
 #EVENTS
 @client.event
