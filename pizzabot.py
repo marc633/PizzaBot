@@ -95,7 +95,7 @@ async def on_ready():
 async def on_message(message):
     # print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}") # chat log for testing
 
-    if re.findall(r"(?i)\bpizza\b", message.content.lower()):  # adds reaction whenever "pizza" is mentioned
+    if re.findall(r"(?i)\bpizzas?\b", message.content.lower()):  # adds reaction whenever "pizza" is mentioned
         await message.add_reaction("\U0001F355")
     await client.process_commands(message)
 
