@@ -153,7 +153,7 @@ async def shitrand(ctx, options):
     with open(bslist, 'a') as file:
         file.writelines("%s\n" % o for o in options)
     result = open(bslist).read().splitlines()
-    await ctx.send(f'I choose pizz... I mean:\n```{random.choice(result)}')
+    await ctx.send(f'I choose pizz... I mean:\n```{random.choice(result)}```')
 
 # PLAYBACK COMMANDS
 @client.command()
