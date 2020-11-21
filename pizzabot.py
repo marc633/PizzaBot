@@ -11,6 +11,7 @@ token = open("token.txt", "r").read() # concealing token
 male = 'first_name_male.txt' # male name file
 female = 'first_name_female.txt' # female name file
 last = 'last_name.txt' # last name name file
+bslist = 'bullshit.txt' # bullshit list
 
 #VARIABLES
 ytdl_format_options = {
@@ -136,6 +137,25 @@ async def toppings(ctx, ingredients=""):
     except Exception:
         await ctx.send("You must only use a single number between 1 and 7.")
 
+@client.command()
+async def randp(ctx, options, count="1"):
+    options = options.split(',')
+    count = int(count)
+    results = ', '.join(random.sample(options, count))
+    await ctx.send(f'I choose pizz... I mean:\n```{results}```')
+    
+    with open(bslist, 'a') as file:
+        file.writelines("%s\n" % o for o in options)
+
+@client.command()
+async def shitrand(ctx, options):
+    options = options.split(',')
+    with open(bslist, 'a') as file:
+        file.writelines("%s\n" % o for o in options)
+    result = open(bslist).read().splitlines()
+    await ctx.send(f'I choose pizz... I mean:\n```{random.choice(result)}')
+
+# PLAYBACK COMMANDS
 @client.command()
 async def play(ctx, url):
     try:
