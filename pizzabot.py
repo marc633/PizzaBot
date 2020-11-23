@@ -11,7 +11,7 @@ token = open("token.txt", "r").read() # concealing token
 male = 'first_name_male.txt' # male name file
 female = 'first_name_female.txt' # female name file
 last = 'last_name.txt' # last name name file
-bslist = 'bullshit.txt' # bullshit list
+bslist = 'bs.txt' # bullshit list
 
 #VARIABLES
 ytdl_format_options = {
@@ -138,20 +138,23 @@ async def toppings(ctx, ingredients=""):
         await ctx.send("You must only use a single number between 1 and 7.")
 
 @client.command()
-async def randp(ctx, options, count="1"):
-    options = options.split(',')
-    count = int(count)
-    results = ', '.join(random.sample(options, count))
+async def prand(ctx, *args):
+    argstring = " ".join(args)
+    option_regex = re.compile(r'^(?P<count>[1-9]?[0-9]*)?\s?(?P<choices>[a-zA-Z0-9?!, ]*)$')
+    options = option_regex.search(argstring)
+
+    count = options.group('count')
+    count = 1 if count == '' else int(count)
+    
+    choices = options.group('choices').split(',')
+    results = ', '.join(random.sample(choices, count))
     await ctx.send(f'I choose pizz... I mean:\n```{results}```')
     
     with open(bslist, 'a') as file:
-        file.writelines("%s\n" % o for o in options)
+        file.writelines("%s\n" % c for c in choices)
 
 @client.command()
-async def shitrand(ctx, options):
-    options = options.split(',')
-    with open(bslist, 'a') as file:
-        file.writelines("%s\n" % o for o in options)
+async def srand(ctx, *args):
     result = open(bslist).read().splitlines()
     await ctx.send(f'I choose pizz... I mean:\n```{random.choice(result)}```')
 
