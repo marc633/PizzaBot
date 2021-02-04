@@ -12,6 +12,7 @@ male = 'first_name_male.txt' # male name file
 female = 'first_name_female.txt' # female name file
 last = 'last_name.txt' # last name name file
 bslist = 'bs.txt' # bullshit list
+gamelist = 'games.txt' # game list
 
 #VARIABLES
 ytdl_format_options = {
@@ -101,6 +102,31 @@ async def on_message(message):
     await client.process_commands(message)
 
 #COMMANDS
+@client.command()
+async def game(ctx, action, *args):
+    gamename = " ".join(args)
+    if action == "add":
+        with open(gamelist, 'a') as file:
+            file.writelines(f'{gamename}\n')
+        await ctx.send(f"```Added {gamename} to your list of Happy Hour games```")
+    elif action == "remove":
+        with open(gamelist, 'r') as ofile:
+            lines = ofile.readlines()
+        with open(gamelist, 'w') as nfile:
+            for line in lines:
+                if line.strip("\n") != gamename:
+                    nfile.write(line)
+        await ctx.send(f"```Removed {gamename} from your list of Happy Hour games```")
+    elif action == "random":
+        result = open(gamelist).read().splitlines()
+        await ctx.send(f'I choose...\n```{random.choice(result)}```')
+    elif action == "list":
+        # await ctx.send(gamelist.read().strip())
+        games = open(gamelist).read()
+        await ctx.send(f"```{games}```")
+    else:
+        await ctx.send("Please use a valid action:\n```!game add gamename\n!game remove gamename\n!game random\n!game list```")
+
 @client.command()
 async def firstmale(ctx):
     await ctx.send(f"```{random_name(male)}```")
