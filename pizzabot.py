@@ -184,6 +184,34 @@ async def srand(ctx, *args):
     result = open(bslist).read().splitlines()
     await ctx.send(f'I choose pizz... I mean:\n```{random.choice(result)}```')
 
+@client.command()
+async def roll(ctx, *args):
+    dice_input = " ".join(args)
+    valid_input = re.search(
+                r"^[1-9][0-9]{0,2}[dD][1-9][0-9]{0,2}$|^[1-9][0-9]{0,2}[dD][1-9][0-9]{0,2} ?[\+\-][0-9]+$",
+                dice_input)
+    if valid_input != None:
+        dice = re.split(r'[dD\+\-]', dice_input)
+        await ctx.send(dice)
+        dice_mod = re.findall(r'[\+\-]', dice_input)
+        await ctx.send(dice_mod)
+
+        if "+" in dice_mod:
+            roll = [random.randint(1, int(dice[1])) for val in range(int(dice[0]))]
+            roll_total = sum(roll) + int(dice[2])
+
+        elif "-" in dice_mod:
+            roll = [random.randint(1, int(dice[1])) for val in range(int(dice[0]))]
+            roll_total = sum(roll) - int(dice[2])
+
+        else:
+            roll = [random.randint(1, int(dice[1])) for val in range(int(dice[0]))]
+            roll_total = sum(roll)
+            dice.append(0)  # for printing purposes
+            dice_mod.append("+")  # for printing purposes
+        
+        await ctx.send(f"{roll} {dice_mod[0]}{dice[2]} -- TOTAL: {roll_total}")
+
 # PLAYBACK COMMANDS
 @client.command()
 async def play(ctx, url):
