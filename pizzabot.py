@@ -192,9 +192,7 @@ async def roll(ctx, *args):
                 dice_input)
     if valid_input != None:
         dice = re.split(r'[dD\+\-]', dice_input)
-        await ctx.send(dice)
         dice_mod = re.findall(r'[\+\-]', dice_input)
-        await ctx.send(dice_mod)
 
         if "+" in dice_mod:
             roll = [random.randint(1, int(dice[1])) for val in range(int(dice[0]))]
