@@ -188,27 +188,37 @@ async def srand(ctx, *args):
 async def roll(ctx, *args):
     dice_input = " ".join(args)
     valid_input = re.search(
-                r"^[1-9][0-9]{0,2}[dD][1-9][0-9]{0,2}$|^[1-9][0-9]{0,2}[dD][1-9][0-9]{0,2} ?[\+\-][0-9]+$",
-                dice_input)
+                r"^[1-9][0-9]{0,2}[dD][1-9][0-9]{0,2}( ?[\+\-][0-9]+)?( [dD][lL])?( [dD][hH])?$", dice_input)
     if valid_input != None:
-        dice = re.split(r'[dD\+\-]', dice_input)
+        options = re.split(r'[dD\+\-]', dice_input)
         dice_mod = re.findall(r'[\+\-]', dice_input)
 
+        roll = [random.randint(1, int(options[1])) for val in range(int(options[0]))]
+
+        matches = ['l','h']
+        if all(any(i in j for j in options) for i in matches):
+            roll.remove(min(roll))
+            roll.remove(max(roll))
+
+        elif 'l' in options: 
+            roll.remove(min(roll))
+
+        elif 'h' in options: 
+            roll.remove(max(roll))
+
+        
         if "+" in dice_mod:
-            roll = [random.randint(1, int(dice[1])) for val in range(int(dice[0]))]
-            roll_total = sum(roll) + int(dice[2])
+            roll_total = sum(roll) + int(options[2])
 
         elif "-" in dice_mod:
-            roll = [random.randint(1, int(dice[1])) for val in range(int(dice[0]))]
-            roll_total = sum(roll) - int(dice[2])
+            roll_total = sum(roll) - int(options[2])
 
         else:
-            roll = [random.randint(1, int(dice[1])) for val in range(int(dice[0]))]
             roll_total = sum(roll)
-            dice.append(0)  # for printing purposes
+            options.insert(2, 0)  # for printing purposes
             dice_mod.append("+")  # for printing purposes
         
-        await ctx.send(f"{roll} {dice_mod[0]}{dice[2]} -- TOTAL: {roll_total}")
+        await ctx.send(f"{roll} {dice_mod[0]}{options[2]} -- TOTAL: {roll_total}")
 
 # PLAYBACK COMMANDS
 @client.command()
