@@ -3,7 +3,7 @@ import re
 import asyncio
 import discord
 from discord.ext import commands
-import youtube_dl
+# import youtube_dl
 
 client = commands.Bot(command_prefix = '!')
 token = open("token.txt", "r").read() # concealing token
@@ -14,48 +14,48 @@ last = 'last_name.txt' # last name name file
 bslist = 'bs.txt' # bullshit list
 gamelist = 'games.txt' # game list
 
-#VARIABLES
-ytdl_format_options = {
-    'format': 'bestaudio/best',
-    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-    'restrictfilenames': True,
-    'noplaylist': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
-}
+# #VARIABLES
+# ytdl_format_options = {
+#     'format': 'bestaudio/best',
+#     'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
+#     'restrictfilenames': True,
+#     'noplaylist': True,
+#     'nocheckcertificate': True,
+#     'ignoreerrors': False,
+#     'logtostderr': False,
+#     'quiet': True,
+#     'no_warnings': True,
+#     'default_search': 'auto',
+#     'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
+# }
 
-ffmpeg_options = {
-    'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-    'options': '-vn'
-}
+# ffmpeg_options = {
+#     'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+#     'options': '-vn'
+# }
 
-ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+# ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 #CLASSES
-class YTDLSource(discord.PCMVolumeTransformer):
-    def __init__(self, source, *, data, volume=0.33):
-        super().__init__(source, volume)
+# class YTDLSource(discord.PCMVolumeTransformer):
+#     def __init__(self, source, *, data, volume=0.33):
+#         super().__init__(source, volume)
 
-        self.data = data
+#         self.data = data
 
-        self.title = data.get('title')
-        self.url = data.get('url')
+#         self.title = data.get('title')
+#         self.url = data.get('url')
 
-    @classmethod
-    async def from_url(cls, url):
-        data = ytdl.extract_info(url, download=False)
+#     @classmethod
+#     async def from_url(cls, url):
+#         data = ytdl.extract_info(url, download=False)
 
-        if 'entries' in data:
-            # take first item from a playlist
-            data = data['entries'][0]
+#         if 'entries' in data:
+#             # take first item from a playlist
+#             data = data['entries'][0]
 
-        filename = data['url'] 
-        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
+#         filename = data['url'] 
+#         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 #FUNCTIONS
 def make_pizza(ingredients):
@@ -188,64 +188,83 @@ async def srand(ctx, *args):
 async def roll(ctx, *args):
     dice_input = " ".join(args)
     valid_input = re.search(
-                r"^[1-9][0-9]{0,2}[dD][1-9][0-9]{0,2}( ?[\+\-][0-9]+)?( [dD][lL])?( [dD][hH])?$", dice_input)
+                # r"^[1-9][0-9]{0,2}[dD][1-9][0-9]{0,2}( ?[\+\-][0-9]+)?( [dD][lL])?( [dD][hH])?$", dice_input)
+                r"^[1-9][0-9]{0,2}[dD][1-9][0-9]{0,2}( ?[\+\-][0-9]+)?( [dD][lL])?( [dD][hH])?$|^(dndstats)$", dice_input)
+
     if valid_input != None:
         options = re.split(r'[dD\+\-]', dice_input)
         dice_mod = re.findall(r'[\+\-]', dice_input)
 
-        roll = [random.randint(1, int(options[1])) for val in range(int(options[0]))]
+        if 'stats' in options:
+            stats = []
+            def dndstats():
+                roll = [random.randint(1, 6) for val in range(4)]
+                low = min(roll)
+                roll.remove(min(roll))
+                roll_total = sum(roll)
+                stats.append(roll_total)
+                roll_full = f"[{roll[0]}, {roll[1]}, {roll[2]}, ~~{low}~~]"
+                roll_out = f'{roll_full} -- TOTAL: {roll_total}'
+                return roll_out
+            # roll.append(f'~~{low}~~')
 
-        matches = ['l','h']
-        if all(any(i in j for j in options) for i in matches):
-            roll.remove(min(roll))
-            roll.remove(max(roll))
-
-        elif 'l' in options: 
-            roll.remove(min(roll))
-
-        elif 'h' in options: 
-            roll.remove(max(roll))
-
-        
-        if "+" in dice_mod:
-            roll_total = sum(roll) + int(options[2])
-
-        elif "-" in dice_mod:
-            roll_total = sum(roll) - int(options[2])
-
+            await ctx.send(
+                f'{dndstats()}\n{dndstats()}\n{dndstats()}\n{dndstats()}\n{dndstats()}\n{dndstats()}\n\nStats: {stats}')
+            # await ctx.send('```[5, 5, 5, ~~5~~]```')
         else:
-            roll_total = sum(roll)
-            options.insert(2, 0)  # for printing purposes
-            dice_mod.append("+")  # for printing purposes
-        
-        await ctx.send(f"{roll} {dice_mod[0]}{options[2]} -- TOTAL: {roll_total}")
+            roll = [random.randint(1, int(options[1])) for val in range(int(options[0]))]
 
-# PLAYBACK COMMANDS
-@client.command()
-async def play(ctx, url):
-    try:
-        channel = ctx.author.voice.channel
-        await channel.connect()
+            matches = ['l','h']
+            if all(any(i in j for j in options) for i in matches):
+                roll.remove(min(roll))
+                roll.remove(max(roll))
 
-        player = await YTDLSource.from_url(url)
-        ctx.voice_client.play(player)
-        await ctx.send(f'Now playing on PizzaBot Radio: {player.title}\n```Playback Commands:\n!volume [1-100]\n!stop```')
-    except AttributeError:
-        await ctx.send("You must join a channel before using the !play command.")        
+            elif 'l' in options: 
+                roll.remove(min(roll))
 
-@client.command()
-async def volume(ctx, volume: int):
-    if ctx.voice_client is None:
-        await ctx.send("Not connected to a voice channel.")
+            elif 'h' in options: 
+                roll.remove(max(roll))
+
+            
+            if "+" in dice_mod:
+                roll_total = sum(roll) + int(options[2])
+
+            elif "-" in dice_mod:
+                roll_total = sum(roll) - int(options[2])
+
+            else:
+                roll_total = sum(roll)
+                options.insert(2, 0)  # for printing purposes
+                dice_mod.append("+")  # for printing purposes
+            
+            await ctx.send(f"{roll} {dice_mod[0]}{options[2]} -- TOTAL: {roll_total}")
+
+# # PLAYBACK COMMANDS
+# @client.command()
+# async def play(ctx, url):
+#     try:
+#         channel = ctx.author.voice.channel
+#         await channel.connect()
+
+#         player = await YTDLSource.from_url(url)
+#         ctx.voice_client.play(player)
+#         await ctx.send(f'Now playing on PizzaBot Radio: {player.title}\n```Playback Commands:\n!volume [1-100]\n!stop```')
+#     except AttributeError:
+#         await ctx.send("You must join a channel before using the !play command.")        
+
+# @client.command()
+# async def volume(ctx, volume: int):
+#     if ctx.voice_client is None:
+#         await ctx.send("Not connected to a voice channel.")
     
-    if volume > 100: volume = 100
-    if volume < 1: volume = 1
+#     if volume > 100: volume = 100
+#     if volume < 1: volume = 1
 
-    ctx.voice_client.source.volume = volume / 100
-    await ctx.send(f"Changed volume to {volume}%")
+#     ctx.voice_client.source.volume = volume / 100
+#     await ctx.send(f"Changed volume to {volume}%")
 
-@client.command()
-async def stop(ctx):
-    await ctx.voice_client.disconnect()
+# @client.command()
+# async def stop(ctx):
+#     await ctx.voice_client.disconnect()
 
 client.run(token)
