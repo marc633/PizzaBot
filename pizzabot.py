@@ -14,49 +14,6 @@ last = 'last_name.txt' # last name name file
 bslist = 'bs.txt' # bullshit list
 gamelist = 'games.txt' # game list
 
-# #VARIABLES
-# ytdl_format_options = {
-#     'format': 'bestaudio/best',
-#     'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-#     'restrictfilenames': True,
-#     'noplaylist': True,
-#     'nocheckcertificate': True,
-#     'ignoreerrors': False,
-#     'logtostderr': False,
-#     'quiet': True,
-#     'no_warnings': True,
-#     'default_search': 'auto',
-#     'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
-# }
-
-# ffmpeg_options = {
-#     'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-#     'options': '-vn'
-# }
-
-# ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
-
-#CLASSES
-# class YTDLSource(discord.PCMVolumeTransformer):
-#     def __init__(self, source, *, data, volume=0.33):
-#         super().__init__(source, volume)
-
-#         self.data = data
-
-#         self.title = data.get('title')
-#         self.url = data.get('url')
-
-#     @classmethod
-#     async def from_url(cls, url):
-#         data = ytdl.extract_info(url, download=False)
-
-#         if 'entries' in data:
-#             # take first item from a playlist
-#             data = data['entries'][0]
-
-#         filename = data['url'] 
-#         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
-
 #FUNCTIONS
 def make_pizza(ingredients):
     pizzatoppings = 'pizzatoppings.txt' # pizza toppings file
@@ -95,8 +52,6 @@ async def on_ready():
 #EVENTS
 @client.event
 async def on_message(message):
-    # print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}") # chat log for testing
-
     if re.findall(r"(?i)\bpizzas?\b", message.content.lower()):  # adds reaction whenever "pizza" is mentioned
         await message.add_reaction("\U0001F355")
     await client.process_commands(message)
@@ -121,7 +76,6 @@ async def game(ctx, action, *args):
         result = open(gamelist).read().splitlines()
         await ctx.send(f'I choose...\n```{random.choice(result)}```')
     elif action == "list":
-        # await ctx.send(gamelist.read().strip())
         games = open(gamelist).read()
         await ctx.send(f"```{games}```")
     else:
@@ -188,7 +142,6 @@ async def srand(ctx, *args):
 async def roll(ctx, *args):
     dice_input = " ".join(args)
     valid_input = re.search(
-                # r"^[1-9][0-9]{0,2}[dD][1-9][0-9]{0,2}( ?[\+\-][0-9]+)?( [dD][lL])?( [dD][hH])?$", dice_input)
                 r"^[1-9][0-9]{0,2}[dD][1-9][0-9]{0,2}( ?[\+\-][0-9]+)?( [dD][lL])?( [dD][hH])?$|^(dndstats)$", dice_input)
 
     if valid_input != None:
@@ -198,19 +151,30 @@ async def roll(ctx, *args):
         if 'stats' in options:
             stats = []
             def dndstats():
-                roll = [random.randint(1, 6) for val in range(4)]
-                low = min(roll)
-                roll.remove(min(roll))
-                roll_total = sum(roll)
-                stats.append(roll_total)
-                roll_full = f"[{roll[0]}, {roll[1]}, {roll[2]}, ~~{low}~~]"
-                roll_out = f'{roll_full} -- TOTAL: {roll_total}'
+                rollcount = 0
+                roll_out = ""
+                while rollcount < 6:
+                    roll_total = 0
+                    badrolls = []
+                    while roll_total < 8:
+                        roll = [random.randint(1, 6) for val in range(4)]
+                        lowroll = min(roll)
+                        roll.remove(lowroll)
+                        roll_total = sum(roll)
+                        if roll_total < 8:
+                            badrolls.append(roll_total)
+                    stats.append(roll_total)
+                    roll_full = f"[{roll[0]}, {roll[1]}, {roll[2]}, ~~{lowroll}~~]"
+                    if badrolls:
+                        roll_out += f'{roll_full} -- TOTAL: {roll_total} -- BADROLLS: {badrolls}\n'
+                    else:    
+                        roll_out += f'{roll_full} -- TOTAL: {roll_total}\n'
+                    rollcount += 1
+                roll_out += f'\nStats: {stats}'
                 return roll_out
-            # roll.append(f'~~{low}~~')
 
-            await ctx.send(
-                f'{dndstats()}\n{dndstats()}\n{dndstats()}\n{dndstats()}\n{dndstats()}\n{dndstats()}\n\nStats: {stats}')
-            # await ctx.send('```[5, 5, 5, ~~5~~]```')
+            await ctx.send(f'{dndstats()}')
+
         else:
             roll = [random.randint(1, int(options[1])) for val in range(int(options[0]))]
 
@@ -238,33 +202,5 @@ async def roll(ctx, *args):
                 dice_mod.append("+")  # for printing purposes
             
             await ctx.send(f"{roll} {dice_mod[0]}{options[2]} -- TOTAL: {roll_total}")
-
-# # PLAYBACK COMMANDS
-# @client.command()
-# async def play(ctx, url):
-#     try:
-#         channel = ctx.author.voice.channel
-#         await channel.connect()
-
-#         player = await YTDLSource.from_url(url)
-#         ctx.voice_client.play(player)
-#         await ctx.send(f'Now playing on PizzaBot Radio: {player.title}\n```Playback Commands:\n!volume [1-100]\n!stop```')
-#     except AttributeError:
-#         await ctx.send("You must join a channel before using the !play command.")        
-
-# @client.command()
-# async def volume(ctx, volume: int):
-#     if ctx.voice_client is None:
-#         await ctx.send("Not connected to a voice channel.")
-    
-#     if volume > 100: volume = 100
-#     if volume < 1: volume = 1
-
-#     ctx.voice_client.source.volume = volume / 100
-#     await ctx.send(f"Changed volume to {volume}%")
-
-# @client.command()
-# async def stop(ctx):
-#     await ctx.voice_client.disconnect()
 
 client.run(token)
