@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 # import youtube_dl
 
-client = commands.Bot(command_prefix = '!')
+client = commands.Bot(command_prefix = '!', case_insensitive=True)
 token = open("token.txt", "r").read() # concealing token
 
 male = 'first_name_male.txt' # male name file
