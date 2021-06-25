@@ -2,6 +2,9 @@ import random
 import re
 import asyncio
 import discord
+import requests
+import pytz
+from datetime import datetime
 from discord.ext import commands
 # import youtube_dl
 
@@ -13,6 +16,11 @@ female = 'first_name_female.txt' # female name file
 last = 'last_name.txt' # last name name file
 bslist = 'bs.txt' # bullshit list
 gamelist = 'games.txt' # game list
+
+#hockey stuff
+pst = pytz.timezone('America/Los_Angeles')
+date = datetime.date(datetime.now(pst)).strftime("%Y-%m-%d")
+url = f"https://statsapi.web.nhl.com/api/v1/schedule?startDate={date}&endDate={date}&expand=schedule.linescore"
 
 #FUNCTIONS
 def make_pizza(ingredients):
@@ -137,6 +145,38 @@ async def prand(ctx, *args):
 async def srand(ctx, *args):
     result = open(bslist).read().splitlines()
     await ctx.send(f'I choose pizz... I mean:\n```{random.choice(result)}```')
+
+@client.command()
+async def phockey(ctx):
+    response = requests.get(url, headers={"Accept": "application/json"})
+
+    data = response.json()['dates'][0]['games']
+    game_count = len(data)
+
+    counter = 0
+    while counter < game_count:
+        game_status = data[counter]['status']['detailedState']
+        home_team = data[counter]['teams']['home']['team']['name']
+        away_team = data[counter]['teams']['away']['team']['name']
+        home_score = data[counter]['teams']['home']['score']
+        away_score = data[counter]['teams']['away']['score']
+        await ctx.send(f'{home_team} @ {away_team}')
+
+        #Final
+        if game_status == "Final":
+            await ctx.send(f'{game_status}: {home_score}-{away_score}')
+
+        #Scheduled
+        if game_status == "Scheduled":
+            game_time = datetime.strptime(data[0]['gameDate'], "%Y-%m-%dT%H:%M:%S%z").astimezone(pst).time().strftime("%-I:%M %p")
+            await ctx.send(f'{game_status}:{game_time}')
+
+        #In Progress
+        if game_status == "In Progress":
+            game_period = data[0]['linescore']['currentPeriodOrdinal']
+            await ctx.send(f'{game_status} ({game_period} Period): {home_score}-{away_score}')
+        await ctx.send("")
+        counter += 1
 
 @client.command()
 async def roll(ctx, *args):
