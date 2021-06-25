@@ -191,7 +191,7 @@ async def phockey(ctx, mod="0"):
 
         #"In Progress - Critical" and "Pre-Game"
         else: 
-            print(f'{game_status}: {home_score}-{away_score}')
+            await ctx.send(f'{game_status}: {home_score}-{away_score}')
 
         await ctx.send("")
         counter += 1
