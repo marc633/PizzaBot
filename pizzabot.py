@@ -160,11 +160,11 @@ async def phockey(ctx):
         away_team = data[counter]['teams']['away']['team']['name']
         home_score = data[counter]['teams']['home']['score']
         away_score = data[counter]['teams']['away']['score']
-        await ctx.send(f'{home_team} @ {away_team}')
+        await ctx.send(f'{away_team} @ {home_team}')
 
         #Final
         if game_status == "Final":
-            await ctx.send(f'{game_status}: {home_score}-{away_score}')
+            await ctx.send(f'{game_status}: {away_score}-{home_score}')
 
         #Scheduled
         if game_status == "Scheduled":
@@ -174,7 +174,7 @@ async def phockey(ctx):
         #In Progress
         if game_status == "In Progress":
             game_period = data[0]['linescore']['currentPeriodOrdinal']
-            await ctx.send(f'{game_status} ({game_period} Period): {home_score}-{away_score}')
+            await ctx.send(f'{game_status} ({game_period} Period): {away_score}-{home_score}')
         await ctx.send("")
         counter += 1
 
