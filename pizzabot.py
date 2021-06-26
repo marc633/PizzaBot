@@ -182,7 +182,7 @@ async def phockey(ctx, mod="0"):
         #Scheduled
         elif game_status == "Scheduled":
             game_time = datetime.strptime(games[0]['gameDate'], "%Y-%m-%dT%H:%M:%S%z").astimezone(pst).time().strftime("%-I:%M %p")
-            await ctx.send(f'{game_status}: {game_time}')
+            await ctx.send(f'{game_status}: {game_time} PT')
 
         #In Progress
         elif game_status == "In Progress":
