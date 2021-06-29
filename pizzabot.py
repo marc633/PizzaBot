@@ -162,6 +162,7 @@ async def phockey(ctx, mod="0"):
     game_count = data['totalGames']
 
     if game_count == 0:
+        date = datetime.strptime(date, "%Y-%m-%d").strftime("%-m/%-d")
         await ctx.send(f'There are no games scheduled on {date}!')
     else:
         games = data['dates'][0]['games']
@@ -173,27 +174,31 @@ async def phockey(ctx, mod="0"):
         away_team = games[counter]['teams']['away']['team']['name']
         home_score = games[counter]['teams']['home']['score']
         away_score = games[counter]['teams']['away']['score']
-        await ctx.send(f'{away_team} @ {home_team}')
+        # await ctx.send(f'{away_team} @ {home_team}')
+        msg = f'{away_team} @ {home_team}\n'
 
         #Final
         if game_status == "Final":
-            await ctx.send(f'{game_status}: {away_score}-{home_score}')
+            msg += f'{game_status}: {away_score}-{home_score}\n'
+            await ctx.send(msg)
 
         #Scheduled
         elif game_status == "Scheduled":
             game_time = datetime.strptime(games[0]['gameDate'], "%Y-%m-%dT%H:%M:%S%z").astimezone(pst).time().strftime("%-I:%M %p")
-            await ctx.send(f'{game_status}: {game_time} PT')
+            msg += f'{game_status}: {game_time} PT\n'
+            await ctx.send(msg)
 
         #In Progress
         elif game_status == "In Progress":
             game_period = games[0]['linescore']['currentPeriodOrdinal']
-            await ctx.send(f'{game_status} ({game_period} Period): {away_score}-{home_score}')
+            msg += f'{game_status} ({game_period} Period): {away_score}-{home_score}\n'
+            await ctx.send(msg)
 
         #"In Progress - Critical" and "Pre-Game"
         else: 
-            await ctx.send(f'{game_status}: {home_score}-{away_score}')
+            msg += f'{game_status}: {home_score}-{away_score}\n'
+            await ctx.send(msg)
 
-        await ctx.send("")
         counter += 1
 
 @client.command()
