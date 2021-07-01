@@ -143,12 +143,14 @@ async def srand(ctx, *args):
     await ctx.send(f'I choose pizz... I mean:\n```{random.choice(result)}```')
 
 @client.command()
-async def phockey(ctx, *args):
+# async def phockey(ctx, *args):
+async def phockey(ctx, *, args=None):
+    if args: args = tuple(args.split(' '))
 
     pst = pytz.timezone('America/Los_Angeles')
     
     modopt = ["0", "+1", "-1", "today", "tomorrow", "yesterday"]
-    if len(args) == 0:
+    if args == None:
         mod = "0"
         teams_req = None
     elif args[0].lower() in modopt:
