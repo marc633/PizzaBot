@@ -40,7 +40,7 @@ def scores(games, game_count, games_req):
 
             #"In Progress - Critical", "Pre-Game, Final"
             else: 
-                msg += f'{game_status}: {home_score}-{away_score}\n'
+                msg += f'{game_status}: {away_score}-{home_score}\n'
             
         counter += 1
     return msg
