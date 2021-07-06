@@ -177,12 +177,14 @@ async def phockey(ctx, *, args=None):
         await ctx.send(f'There are no games scheduled on {date}!')
 
     elif teams_req:
+        date = datetime.strptime(date, "%Y-%m-%d").strftime("%-m/%-d")
         games = data['dates'][0]['games']
         games_req = game_search(games, game_count, teams_req)
         msg = scores(games, game_count, games_req)
         if msg == "":
-            argsout = "\n" + args.replace(' ', '\n')
-            msg = f"There were no games matching your search criteria:\n```{argsout}```"
+            teamsout = "\n"
+            for i in teams_req: teamsout += i + '\n'
+            msg = f"There were no games matching your search criteria on {date}:\n```{teamsout}```"
         await ctx.send(msg)
     
     else:
