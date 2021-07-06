@@ -181,7 +181,7 @@ async def phockey(ctx, *, args=None):
         games_req = game_search(games, game_count, teams_req)
         msg = scores(games, game_count, games_req)
         if msg == "":
-            argsout = args.replace(' ', '\n')
+            argsout = "\n" + args.replace(' ', '\n')
             msg = f"There were no games matching your search criteria:\n```{argsout}```"
         await ctx.send(msg)
     
