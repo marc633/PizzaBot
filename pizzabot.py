@@ -143,22 +143,22 @@ async def srand(ctx, *args):
     await ctx.send(f'I choose pizz... I mean:\n```{random.choice(result)}```')
 
 @client.command()
-# async def phockey(ctx, *args):
 async def phockey(ctx, *, args=None):
-    if args: args = tuple(args.split(' '))
+    argtuple = None
+    if args: argtuple = tuple(args.split(' '))
 
     pst = pytz.timezone('America/Los_Angeles')
     
     modopt = ["0", "+1", "-1", "today", "tomorrow", "yesterday"]
-    if args == None:
+    if argtuple == None:
         mod = "0"
         teams_req = None
-    elif args[0].lower() in modopt:
-        mod = args[0]
-        teams_req = args[1:]
+    elif argtuple[0].lower() in modopt:
+        mod = argtuple[0]
+        teams_req = argtuple[1:]
     else:
         mod = "0"
-        teams_req = args
+        teams_req = argtuple
 
     if mod == "-1" or mod.lower() == "yesterday": mod = -1
     elif mod == "+1" or mod.lower() == "tomorrow": mod = 1
@@ -181,73 +181,14 @@ async def phockey(ctx, *, args=None):
         games_req = game_search(games, game_count, teams_req)
         msg = scores(games, game_count, games_req)
         if msg == "":
-            msg = f"There were no games matching your search criteria:\n{teams_req}"
+            argsout = args.replace(' ', '\n')
+            msg = f"There were no games matching your search criteria:\n```{argsout}```"
         await ctx.send(msg)
     
     else:
         games_req = [i for i in range(game_count)]
         games = data['dates'][0]['games']
         await ctx.send(scores(games, game_count, games_req))
-
-# @client.command()
-# async def phockey(ctx, mod="0"):
-#     pst = pytz.timezone('America/Los_Angeles')
-
-#     if mod.lower() == "-1" or mod.lower() == "yesterday":
-#         mod = -1
-#     elif mod.lower() == "+1" or mod.lower() == "tomorrow":
-#         mod = 1
-#     else:
-#         mod = 0
-
-#     # date = datetime.date(datetime.now(pst)).strftime("%Y-%m-%d")
-#     date = datetime.date(datetime.now(pst) + timedelta(days=mod)).strftime("%Y-%m-%d")
-#     url = f"https://statsapi.web.nhl.com/api/v1/schedule?startDate={date}&endDate={date}&expand=schedule.linescore"
-
-#     response = requests.get(url, headers={"Accept": "application/json"})
-
-#     data = response.json()
-#     game_count = data['totalGames']
-
-#     if game_count == 0:
-#         date = datetime.strptime(date, "%Y-%m-%d").strftime("%-m/%-d")
-#         await ctx.send(f'There are no games scheduled on {date}!')
-#     else:
-#         games = data['dates'][0]['games']
-
-#     counter = 0
-#     while counter < game_count:
-#         game_status = games[counter]['status']['detailedState']
-#         home_team = games[counter]['teams']['home']['team']['name']
-#         away_team = games[counter]['teams']['away']['team']['name']
-#         home_score = games[counter]['teams']['home']['score']
-#         away_score = games[counter]['teams']['away']['score']
-#         # await ctx.send(f'{away_team} @ {home_team}')
-#         msg = f'{away_team} @ {home_team}\n'
-
-#         #Final
-#         if game_status == "Final":
-#             msg += f'{game_status}: {away_score}-{home_score}\n'
-#             await ctx.send(msg)
-
-#         #Scheduled
-#         elif game_status == "Scheduled":
-#             game_time = datetime.strptime(games[0]['gameDate'], "%Y-%m-%dT%H:%M:%S%z").astimezone(pst).time().strftime("%-I:%M %p")
-#             msg += f'{game_status}: {game_time} PT\n'
-#             await ctx.send(msg)
-
-#         #In Progress
-#         elif game_status == "In Progress":
-#             game_period = games[0]['linescore']['currentPeriodOrdinal']
-#             msg += f'{game_status} ({game_period} Period): {away_score}-{home_score}\n'
-#             await ctx.send(msg)
-
-#         #"In Progress - Critical" and "Pre-Game"
-#         else: 
-#             msg += f'{game_status}: {home_score}-{away_score}\n'
-#             await ctx.send(msg)
-
-#         counter += 1
 
 @client.command()
 async def roll(ctx, *args):

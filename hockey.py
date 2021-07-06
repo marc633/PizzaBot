@@ -26,7 +26,7 @@ def scores(games, game_count, games_req):
             home_score = games[counter]['teams']['home']['score']
             away_score = games[counter]['teams']['away']['score']
             
-            msg += f'{away_team} @ {home_team}\n'
+            msg += f'*{away_team} @ {home_team}*\n'
 
             #Scheduled
             if game_status == "Scheduled":
