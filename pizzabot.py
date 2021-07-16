@@ -61,7 +61,7 @@ async def on_message(message):
     await client.process_commands(message)
 
 #COMMANDS
-@client.command()
+@client.command(brief='This will display and add to happy hour games.')
 async def game(ctx, action, *args):
     gamename = " ".join(args)
     if action == "add":
@@ -85,19 +85,19 @@ async def game(ctx, action, *args):
     else:
         await ctx.send("Please use a valid action:\n```!game add gamename\n!game remove gamename\n!game random\n!game list```")
 
-@client.command()
+@client.command(brief='Displays a random male first name.')
 async def firstmale(ctx):
     await ctx.send(f"```{random_name(male)}```")
 
-@client.command()
+@client.command(brief='Displays a random female first name.')
 async def firstfemale(ctx):
     await ctx.send(f"```{random_name(female)}```")
 
-@client.command()
+@client.command(brief='Displays a random male full name.')
 async def fullmale(ctx):
     await ctx.send(f"```{random_name(male)} {random_name(last)}```")
 
-@client.command()
+@client.command(brief='Displays a random female full name.')
 async def fullfemale(ctx):
     await ctx.send(f"```{random_name(female)} {random_name(last)}```")
 
@@ -105,7 +105,7 @@ async def fullfemale(ctx):
 async def football(ctx):
     await ctx.send("https://sportsdata.usatoday.com/football/nfl/scores")
 
-@client.command()
+@client.command(brief='Gives a pizza with random toppings.')
 async def toppings(ctx, ingredients=""):    
     try:
         if ingredients == "": ingredients = random.randint(1,3)
@@ -121,8 +121,8 @@ async def toppings(ctx, ingredients=""):
     except Exception:
         await ctx.send("You must only use a single number between 1 and 7.")
 
-@client.command()
-async def prand(ctx, *args):
+@client.command(brief='Selects a random choice from those supplied.')
+async def rand(ctx, *args):
     argstring = " ".join(args)
     option_regex = re.compile(r'^(?P<count>[1-9]?[0-9]*)?\s?(?P<choices>[a-zA-Z0-9?!, ]*)$')
     options = option_regex.search(argstring)
@@ -137,13 +137,13 @@ async def prand(ctx, *args):
     with open(bslist, 'a') as file:
         file.writelines("%s\n" % c for c in choices)
 
-@client.command()
+@client.command(brief='Really bad random, who knows what it\'s doing?')
 async def srand(ctx, *args):
     result = open(bslist).read().splitlines()
     await ctx.send(f'I choose pizz... I mean:\n```{random.choice(result)}```')
 
-@client.command()
-async def phockey(ctx, *, args=None):
+@client.command(brief='Gives hockey scores for yesterday/today/tomorrow')
+async def hockey(ctx, *, args=None):
     argtuple = None
     if args: argtuple = tuple(args.split(' '))
 
@@ -192,7 +192,7 @@ async def phockey(ctx, *, args=None):
         games = data['dates'][0]['games']
         await ctx.send(scores(games, game_count, games_req))
 
-@client.command()
+@client.command(brief='DnD style dice roller.')
 async def roll(ctx, *args):
     dice_input = " ".join(args)
     valid_input = re.search(
