@@ -124,7 +124,7 @@ async def toppings(ctx, ingredients=""):
 @client.command(brief='Selects a random choice from those supplied.')
 async def rand(ctx, *args):
     argstring = " ".join(args)
-    option_regex = re.compile(r'^(?P<count>[1-9]?[0-9]*)?\s?(?P<choices>[a-zA-Z0-9?!, ]*)$')
+    option_regex = re.compile(r'^(?P<count>[1-9]?[0-9]* )?\s?(?P<choices>[a-zA-Z0-9?!, ]*)$')
     options = option_regex.search(argstring)
 
     count = options.group('count')
