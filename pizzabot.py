@@ -139,7 +139,7 @@ async def rand(ctx, *args):
         result = random.choice(choices)
         await ctx.send(f'I choose...\n```{result}```')
     except IndexError:
-        await ctx.send('You didn\'t provide any choices index')
+        await ctx.send('You didn\'t provide any choices.')
     except Exception:
         await ctx.send("Something went wrong.")
 
