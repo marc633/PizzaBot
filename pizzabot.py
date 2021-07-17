@@ -149,8 +149,10 @@ async def mrand(ctx, count=None, *args):
         count = int(count)
     except ValueError:
         await ctx.send("You must only use numbers for your choices, for example:\n```!mrand 2 foo, bar, baz```")
+        return
     except TypeError:
         await ctx.send("You must provide a count and choices, for example:\n```!mrand 2 foo, bar, baz```")
+        return
 
     choices = "".join(args)
     choices = choices.replace(', ', ',')
