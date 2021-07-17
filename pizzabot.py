@@ -128,7 +128,7 @@ async def rand(ctx, *args):
     options = option_regex.search(argstring)
 
     count = options.group('count')
-    count = 1 if count == '' else int(count)
+    count = 1 if count == None else int(count)
     
     choices = options.group('choices').split(',')
     results = ', '.join(random.sample(choices, count))
