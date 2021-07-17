@@ -167,8 +167,6 @@ async def mrand(ctx, count=None, *args):
         await ctx.send('You didn\'t provide any choices.')
     except ValueError:
         await ctx.send('You didn\'t provide enough choices.')
-    except Exception:
-        await ctx.send("Something went wrong.")
 
 @client.command(brief='Really bad random, who knows what it\'s doing?')
 async def srand(ctx, *args):
