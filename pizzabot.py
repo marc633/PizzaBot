@@ -85,21 +85,28 @@ async def game(ctx, action, *args):
     else:
         await ctx.send("Please use a valid action:\n```!game add gamename\n!game remove gamename\n!game random\n!game list```")
 
-@client.command(brief='Displays a random male first name.')
-async def firstmale(ctx):
-    await ctx.send(f"```{random_name(male)}```")
+@client.command(brief="Random first or full name for males or females.")
+async def name(ctx, style="rand", gender="rand"):
+    style_opt = ('first', 'full')
+    gender_opt = ('male', 'female')
+    if style == "rand": style = random.choice(style_opt)
+    if gender == "rand": gender = random.choice(gender_opt)
+    style, gender = style.lower(), gender.lower()
 
-@client.command(brief='Displays a random female first name.')
-async def firstfemale(ctx):
-    await ctx.send(f"```{random_name(female)}```")
+    if style not in style_opt or gender not in gender_opt:
+        await ctx.send("```Must be in this format:\n!name [first|full|rand] [male|female|rand]\nYou may also just use !name for all random.```")
 
-@client.command(brief='Displays a random male full name.')
-async def fullmale(ctx):
-    await ctx.send(f"```{random_name(male)} {random_name(last)}```")
+    elif style == 'first':
+        if gender == 'male':
+            await ctx.send(f"```{random_name(male)}```")
+        else:
+            await ctx.send(f"```{random_name(female)}```")
 
-@client.command(brief='Displays a random female full name.')
-async def fullfemale(ctx):
-    await ctx.send(f"```{random_name(female)} {random_name(last)}```")
+    else:
+        if gender == 'male':
+            await ctx.send(f"```{random_name(male)} {random_name(last)}```")
+        else:
+            await ctx.send(f"```{random_name(female)} {random_name(last)}```")
 
 @client.command()
 async def football(ctx):
