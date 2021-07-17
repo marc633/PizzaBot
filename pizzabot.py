@@ -124,18 +124,22 @@ async def toppings(ctx, ingredients=""):
 @client.command(brief='Selects a random choice from those supplied.')
 async def rand(ctx, *args):
     argstring = " ".join(args)
-    option_regex = re.compile(r'^(?P<count>[1-9]?[0-9]* )?\s?(?P<choices>[a-zA-Z0-9?!, ]*)$')
+    option_regex = re.compile(r'^(?P<count>[1-9]?[0-9]* )?\s?(?P<choices>[\s\S]*)$')
     options = option_regex.search(argstring)
 
     count = options.group('count')
     count = 1 if count == None else int(count)
     
     choices = options.group('choices').split(',')
-    results = ', '.join(random.sample(choices, count))
-    await ctx.send(f'I choose pizz... I mean:\n```{results}```')
     
-    with open(bslist, 'a') as file:
-        file.writelines("%s\n" % c for c in choices)
+    if count >= len(choices):
+        await ctx.send(f'I can\'t make {count} choices from {len(choices)} items.')
+    else:
+        results = '\n' + '\n'.join(random.sample(choices, count))
+        await ctx.send(f'I choose...\n```{results}```')
+        
+        with open(bslist, 'a') as file:
+            file.writelines("%s\n" % c for c in choices)
 
 @client.command(brief='Really bad random, who knows what it\'s doing?')
 async def srand(ctx, *args):
