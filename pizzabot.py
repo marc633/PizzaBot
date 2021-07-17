@@ -130,23 +130,47 @@ async def toppings(ctx, ingredients=""):
 
 @client.command(brief='Selects a random choice from those supplied.')
 async def rand(ctx, *args):
-    argstring = " ".join(args)
-    option_regex = re.compile(r'^(?P<count>[1-9]?[0-9]* )?\s?(?P<choices>(?!.*,,)(?!.*,$).*[,]+.*)$')
-    options = option_regex.search(argstring)
+    choices = "".join(args)
+    choices = choices.replace(', ', ',')
+    choices = choices.split(',')
+    choices = [i for i in choices if i != '']
 
-    count = options.group('count')
-    count = 1 if count == None else int(count)
+    try:
+        result = random.choice(choices)
+        await ctx.send(f'I choose...\n```{result}```')
+    except IndexError:
+        await ctx.send('You didn\'t provide any choices index')
+    except Exception:
+        await ctx.send("Something went wrong.")
+
+@client.command(brief='Multiple random choices from those supplied.')
+async def mrand(ctx, count=None, *args):
+    try:
+        count = int(count)
+    except ValueError:
+        await ctx.send("You must only use numbers for your choices, for example:\n```!mrand 2 foo, bar, baz```")
+    except TypeError:
+        await ctx.send("You must provide a count and choices, for example:\n```!mrand 2 foo, bar, baz```")
+    except Exception:
+        await ctx.send("Something went wrong.")
+
+    choices = "".join(args)
+    choices = choices.replace(', ', ',')
+    choices = choices.split(',')
+    choices = [i for i in choices if i != '']
     
-    choices = options.group('choices').split(',')
-    
-    if count >= len(choices):
-        await ctx.send(f'I can\'t make {count} choices from {len(choices)} items.')
-    else:
-        results = '\n' + '\n'.join(random.sample(choices, count))
-        await ctx.send(f'I choose...\n```{results}```')
-        
-        with open(bslist, 'a') as file:
-            file.writelines("%s\n" % c for c in choices)
+    try:
+        result_list = random.sample(choices, count)
+        result = '\n'
+        for i in result_list:
+            result += i + '\n'
+        await ctx.send(f'I choose...\n```{result}```')
+    except IndexError:
+        await ctx.send('You didn\'t provide any choices.')
+    except ValueError:
+        await ctx.send('You didn\'t provide enough choices.')
+    except Exception:
+        await ctx.send("Something went wrong.")
 
 @client.command(brief='Really bad random, who knows what it\'s doing?')
 async def srand(ctx, *args):
