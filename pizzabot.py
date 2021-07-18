@@ -136,22 +136,23 @@ async def rand(ctx, *args):
     choices = [i for i in choices if i != '']
 
     try:
-        result = random.choice(choices)
-        await ctx.send(f'I choose...\n```{result}```')
+        if len(choices) < 2:
+            await ctx.send('You must give me at least 2 choices.')
+        else:
+            result = random.choice(choices)
+            await ctx.send(f'I choose...\n```{result}```')
     except IndexError:
         await ctx.send('You didn\'t provide any choices.')
-    except Exception:
-        await ctx.send("Something went wrong.")
 
 @client.command(brief='Multiple random choices from those supplied.')
 async def mrand(ctx, count=None, *args):
     try:
         count = int(count)
     except ValueError:
-        await ctx.send("You must only use numbers for your choices, for example:\n```!mrand 2 foo, bar, baz```")
+        await ctx.send("You must only use numbers for your choices, for example:\n```!mrand 2 first, second, third```")
         return
     except TypeError:
-        await ctx.send("You must provide a count and choices, for example:\n```!mrand 2 foo, bar, baz```")
+        await ctx.send("You must provide a count and choices, for example:\n```!mrand 2 first, second, third```")
         return
 
     choices = "".join(args)
@@ -160,11 +161,14 @@ async def mrand(ctx, count=None, *args):
     choices = [i for i in choices if i != '']
     
     try:
-        result_list = random.sample(choices, count)
-        result = '\n'
-        for i in result_list:
-            result += i + '\n'
-        await ctx.send(f'I choose...\n```{result}```')
+        if len(choices) <= count:
+            await ctx.send(f'You must provide more choices ({len(choices)} given) than your desired results ({count} given).')
+        else:
+            result_list = random.sample(choices, count)
+            result = '\n'
+            for i in result_list:
+                result += i + '\n'
+            await ctx.send(f'I choose...\n```{result}```')
     except IndexError:
         await ctx.send('You didn\'t provide any choices.')
     except ValueError:
