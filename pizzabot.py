@@ -296,9 +296,21 @@ async def roll(ctx, *args):
             await ctx.send(f"{roll} {dice_mod[0]}{options[2]} -- TOTAL: {roll_total}")
 
 #HIDDEN OWNER COMMANDS
+# @client.command(hidden=True)
+# @commands.is_owner()
+# async def say(ctx, *, args):
+#     await ctx.send(args)
+
 @client.command(hidden=True)
 @commands.is_owner()
-async def say(ctx, *, args):
-    await ctx.send(args)
+async def say(ctx, channel, *, args):
+    try:
+        channel = await commands.TextChannelConverter().convert(ctx, channel)
+        message = args
+        await channel.send(message)
+    except commands.errors.ChannelNotFound:
+        await ctx.send('You must send to an active chat channel. EX:\n!say general hi')
+    except Exception as e:
+        await ctx.send(f'Something went wrong: {e}')
 
 client.run(token)
