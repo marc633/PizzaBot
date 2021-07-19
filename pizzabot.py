@@ -9,7 +9,8 @@ from datetime import datetime, timedelta
 from discord.ext import commands
 # import youtube_dl
 
-client = commands.Bot(command_prefix = '!', case_insensitive=True)
+owners = [193721090755788801]
+client = commands.Bot(command_prefix = '!', case_insensitive=True, owner_ids = set(owners))
 token = open("token.txt", "r").read() # concealing token
 
 male = 'first_name_male.txt' # male name file
@@ -293,5 +294,11 @@ async def roll(ctx, *args):
                 dice_mod.append("+")  # for printing purposes
             
             await ctx.send(f"{roll} {dice_mod[0]}{options[2]} -- TOTAL: {roll_total}")
+
+#HIDDEN OWNER COMMANDS
+@client.command(hidden=True)
+@commands.is_owner()
+async def say(ctx, *, args):
+    await ctx.send(args)
 
 client.run(token)
