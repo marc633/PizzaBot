@@ -298,13 +298,13 @@ async def roll(ctx, *args):
 @client.command(brief='Reminds in minutes or \'tomorrow\' with message')
 async def remindme(ctx, rtime=None, *, args='You requested a reminder.'):
     try:
-        if rtime.lower == 'tomorrow':
+        if rtime.lower() == 'tomorrow':
             await asyncio.sleep(86400)
-        elif int(rtime) <= 1440:
+        elif int(rtime) <= 1440 and int(rtime) > 0:
             rtime = int(rtime) * 60
             await asyncio.sleep(rtime)
         else:
-            await ctx.send('Reminders are limited to one day.')
+            await ctx.send('Reminders must be between 1 minute and a full day.')
             return
         await ctx.send(f'{ctx.author.mention}:\n{args}')
     except ValueError:
