@@ -295,6 +295,18 @@ async def roll(ctx, *args):
             
             await ctx.send(f"{roll} {dice_mod[0]}{options[2]} -- TOTAL: {roll_total}")
 
+@client.command(brief='Reminds in minutes or \'tomorrow\' with message')
+async def remindme(ctx, rtime, *, args):
+    try:
+        if rtime.lower == 'tomorrow':
+            await asyncio.sleep(86400)
+        else:
+            rtime = int(rtime) * 60
+            await asyncio.sleep(rtime)
+        await ctx.send(f'{ctx.author.mention}:\n{args}')
+    except ValueError:
+        await ctx.send('You must use any of these formats:\n```!remindme [minutes] [message]\n!remindme tomorrow [message]```')
+
 #HIDDEN OWNER COMMANDS
 # @client.command(hidden=True)
 # @commands.is_owner()
