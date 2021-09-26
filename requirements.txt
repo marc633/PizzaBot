@@ -1,0 +1,7 @@
+random
+re
+asyncio
+discord.py
+requests
+pytz
+datetime
