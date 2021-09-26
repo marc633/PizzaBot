@@ -1,3 +1,4 @@
+import os
 import random
 import re
 import asyncio
@@ -11,7 +12,7 @@ from discord.ext import commands
 
 owners = [193721090755788801]
 client = commands.Bot(command_prefix = '!', case_insensitive=True, owner_ids = set(owners))
-token = open("token.txt", "r").read() # concealing token
+# token = open("token.txt", "r").read() # concealing token # NOT NEEDED FOR HEROKU
 
 male = 'first_name_male.txt' # male name file
 female = 'first_name_female.txt' # female name file
@@ -330,4 +331,5 @@ async def say(ctx, channel, *, args):
     except Exception as e:
         await ctx.send(f'Something went wrong: {e}')
 
-client.run(token)
+# client.run(token) # NOT NEEDED FOR HEROKU
+client.run(os.environ['BOT_TOKEN'])
