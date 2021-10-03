@@ -140,7 +140,7 @@ async def rand(ctx, *args):
         if len(choices) < 2:
             await ctx.send('You must give me at least 2 choices.')
         else:
-            result = random.choice(choices)
+            result = random.choice(choices).strip()
             await ctx.send(f'I choose...\n```{result}```')
     except IndexError:
         await ctx.send('You didn\'t provide any choices.')
