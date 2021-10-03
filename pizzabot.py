@@ -132,8 +132,7 @@ async def toppings(ctx, ingredients=""):
 
 @client.command(brief='Selects a random choice from those supplied.')
 async def rand(ctx, *args):
-    choices = "".join(args)
-    choices = choices.replace(', ', ',')
+    choices = " ".join(args)
     choices = choices.split(',')
     choices = [i for i in choices if i != '']
 
