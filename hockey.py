@@ -30,7 +30,7 @@ def scores(games, game_count, games_req):
 
             #Scheduled
             if game_status == "Scheduled":
-                game_time = datetime.strptime(games[0]['gameDate'], "%Y-%m-%dT%H:%M:%S%z").astimezone(pst).time().strftime("%-I:%M %p")
+                game_time = datetime.strptime(games[counter]['gameDate'], "%Y-%m-%dT%H:%M:%S%z").astimezone(pst).time().strftime("%-I:%M %p")
                 msg += f'{game_status}: {game_time} PT\n'
 
             #In Progress
