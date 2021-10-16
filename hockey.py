@@ -35,7 +35,7 @@ def scores(games, game_count, games_req):
 
             #In Progress
             elif game_status == "In Progress":
-                game_period = games[0]['linescore']['currentPeriodOrdinal']
+                game_period = games[counter]['linescore']['currentPeriodOrdinal']
                 msg += f'{game_status} ({game_period} Period): {away_score}-{home_score}\n'
 
             #"In Progress - Critical", "Pre-Game, Final"
