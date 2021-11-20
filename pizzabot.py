@@ -132,8 +132,7 @@ async def toppings(ctx, ingredients=""):
 
 @client.command(brief='Selects a random choice from those supplied.')
 async def rand(ctx, *args):
-    await ctx.send(len(args))
-    if 'forza' == args[0].lower() and args == 1:
+    if 'forza' == args[0].lower() and len(args) == 1:
         forza_class = ('C', 'B', 'A', 'S1', 'S2', 'X')
         forza_race = ('Road', 'Dirt', 'Cross Country', 'Street', 'Drag')
         forza_class_choice = random.choice(forza_class)
