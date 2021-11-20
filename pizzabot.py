@@ -132,18 +132,26 @@ async def toppings(ctx, ingredients=""):
 
 @client.command(brief='Selects a random choice from those supplied.')
 async def rand(ctx, *args):
-    choices = " ".join(args)
-    choices = choices.split(',')
-    choices = [i for i in choices if i != '']
+    await ctx.send(len(args))
+    if 'forza' == args[0].lower() and args == 1:
+        forza_class = ('C', 'B', 'A', 'S1', 'S2', 'X')
+        forza_race = ('Road', 'Dirt', 'Cross Country', 'Street', 'Drag')
+        forza_class_choice = random.choice(forza_class)
+        forza_race_choice = random.choice(forza_race)
+        await ctx.send(f'I choose...\n```{forza_race_choice} Racing with {forza_class_choice} ranked vehicles.```')
+    else:
+        choices = " ".join(args)
+        choices = choices.split(',')
+        choices = [i for i in choices if i != '']
 
-    try:
-        if len(choices) < 2:
-            await ctx.send('You must give me at least 2 choices.')
-        else:
-            result = random.choice(choices).strip()
-            await ctx.send(f'I choose...\n```{result}```')
-    except IndexError:
-        await ctx.send('You didn\'t provide any choices.')
+        try:
+            if len(choices) < 2:
+                await ctx.send('You must give me at least 2 choices.')
+            else:
+                result = random.choice(choices).strip()
+                await ctx.send(f'I choose...\n```{result}```')
+        except IndexError:
+            await ctx.send('You didn\'t provide any choices.')
 
 @client.command(brief='Multiple random choices from those supplied.')
 async def mrand(ctx, count=None, *args):
