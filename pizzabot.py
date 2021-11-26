@@ -135,14 +135,14 @@ async def rand(ctx, *args):
     if 'forza' == args[0].lower():
         forza_class = ('D', 'C', 'B', 'A', 'S1', 'S2', 'X')
         forza_race = ('Road', 'Dirt', 'Cross Country', 'Street', 'Drag')
-        
-        if args[1].upper() in forza_class:
+        forza_class_choice = random.choices(forza_class, weights=[50, 150, 200, 200, 150, 125, 125], k=1)[0]
+        forza_race_choice = random.choices(forza_race, weights=[2475, 2475, 2475, 2475, 100], k=1)[0]
+ 
+        if len(args) == 2 and args[1].upper() in forza_class:
             forza_class_choice = args[1].upper()
-        else:
-            forza_class_choice = random.choices(forza_class, weights=[50, 150, 200, 200, 150, 125, 125], k=1)
-        forza_race_choice = random.choices(forza_race, weights=[2475, 2475, 2475, 2475, 100], k=1)
         
-        await ctx.send(f'I choose...\n```{forza_race_choice[0]} Racing with \'{forza_class_choice[0]}\' ranked vehicles.```')
+        await ctx.send(f'I choose...\n```{forza_race_choice} Racing with \'{forza_class_choice}\' ranked vehicles.```')
+
     else:
         choices = " ".join(args)
         choices = choices.split(',')
