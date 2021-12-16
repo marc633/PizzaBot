@@ -135,7 +135,7 @@ async def rand(ctx, *args):
     if 'forza' == args[0].lower():
         forza_class = ('D', 'C', 'B', 'A', 'S1', 'S2', 'X')
         forza_race = ('Road', 'Dirt', 'Cross Country', 'Street', 'Drag')
-        forza_class_choice = random.choices(forza_class, weights=[50, 150, 200, 200, 150, 125, 125], k=1)[0]
+        forza_class_choice = random.choices(forza_class, weights=[55, 160, 210, 210, 160, 125, 75], k=1)[0]
         forza_race_choice = random.choices(forza_race, weights=[2475, 2475, 2475, 2475, 100], k=1)[0]
  
         if len(args) == 2 and args[1].upper() in forza_class:
