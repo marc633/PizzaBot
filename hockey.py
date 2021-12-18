@@ -40,7 +40,7 @@ def scores(games, game_count, games_req):
 
             #Postponed
             elif game_status == "Postponed":
-                msg += game_status
+                msg += f'{game_status}\n'
 
             #"In Progress - Critical", "Pre-Game, Final"
             else: 
